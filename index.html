@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Transformer</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background: #f8f8f8;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Image Transformer</h1>
+    <p>Upload an image → background removed → horizontally flipped → hosted URL.</p>
+
+    <input type="file" id="file" accept="image/*" />
+    <button id="uploadBtn">Upload & Transform</button>
+    <div id="status"></div>
+
+    <h2>Your images</h2>
+    <div id="list" class="grid"></div>
+
+    <script>
+        const api = '/api/media';
+
+        async function listImages() {
+            const res = await fetch(api + '?action=list');
+            const data = await res.json();
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            (data.items || []).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+          <img src="${item.url}" alt="image" />
+          <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+            <a href="${item.url}" target="_blank">Open</a>
+            <button data-path="${item.pathname}">Delete</button>
+          </div>
+        `;
+                div.querySelector('button').onclick = async (e) => {
+                    const path = e.currentTarget.getAttribute('data-path');
+                    await fetch(api + '?action=delete&pathname=' + encodeURIComponent(path), { method: 'DELETE' });
+                    await listImages();
+                };
+                list.appendChild(div);
+            });
+        }
+
+        async function upload() {
+            const f = document.getElementById('file').files[0];
+            if (!f) { alert('Pick a file'); return; }
+            document.getElementById('status').textContent = 'Processing…';
+
+            const buf = await f.arrayBuffer();
+            // base64 encode - process in chunks to avoid call stack overflow
+            const uint8Array = new Uint8Array(buf);
+            let binaryString = '';
+            const chunkSize = 8192; // Process 8KB at a time
+            for (let i = 0; i < uint8Array.length; i += chunkSize) {
+                const chunk = uint8Array.slice(i, i + chunkSize);
+                binaryString += String.fromCharCode(...chunk);
+            }
+            const b64 = btoa(binaryString);
+
+            const res = await fetch(api + '?action=upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fileB64: b64 }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById('status').innerHTML = `Done → <a href="${data.url}" target="_blank">${data.url}</a>`;
+                await listImages();
+            } else {
+                document.getElementById('status').textContent = 'Error: ' + (data.error || 'Unknown');
+                console.error(data);
+            }
+        }
+
+        document.getElementById('uploadBtn').onclick = upload;
+        listImages();
+    </script>
+</body>
+
+</html>

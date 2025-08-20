@@ -1,0 +1,17 @@
+{
+  "name": "image-transform-min",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@vercel/blob": "latest",
+    "@vercel/node": "latest",
+    "sharp": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
