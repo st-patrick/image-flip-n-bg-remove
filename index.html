@@ -450,6 +450,9 @@
             const status = document.getElementById('status');
             status.innerHTML = message;
             
+            // Show the status area
+            status.classList.add('show');
+            
             // Remove existing type classes
             status.classList.remove('status-loading', 'status-success', 'status-error', 'status-info');
             
@@ -467,11 +470,19 @@
                     status.style.background = 'rgba(52, 199, 89, 0.1)';
                     status.style.color = '#34C759';
                     status.style.border = '1px solid rgba(52, 199, 89, 0.2)';
+                    // Auto-hide success messages after 5 seconds
+                    setTimeout(() => {
+                        status.classList.remove('show');
+                    }, 5000);
                     break;
                 case 'error':
                     status.style.background = 'rgba(255, 69, 58, 0.1)';
                     status.style.color = '#FF453A';
                     status.style.border = '1px solid rgba(255, 69, 58, 0.2)';
+                    // Auto-hide error messages after 7 seconds
+                    setTimeout(() => {
+                        status.classList.remove('show');
+                    }, 7000);
                     break;
                 default:
                     status.style.background = 'rgba(248, 248, 248, 0.8)';
