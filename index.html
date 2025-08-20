@@ -4,53 +4,322 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image Transformer</title>
+    <title>✨ Image Transformer</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, sans-serif;
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 12px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
 
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            padding: 10px;
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
         }
 
-        img {
-            max-width: 100%;
-            border-radius: 8px;
-            display: block;
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4, #45b7d1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 6s ease-in-out infinite;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        #file {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            border: 3px dashed #e0e7ff;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .file-input-label:hover {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            color: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
         }
 
         button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
-            padding: 6px 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        #status {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 500;
+            text-align: center;
+            min-height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .results-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            flex: 0 1 auto;
+            max-width: 400px;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .card:hover img {
+            transform: scale(1.02);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-actions a {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
             border-radius: 8px;
-            border: 1px solid #ccc;
-            background: #f8f8f8;
+            background: rgba(139, 92, 246, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .card-actions a:hover {
+            background: rgba(139, 92, 246, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .card-actions button {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .card-actions button:hover {
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .hero {
+                padding: 2rem 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .upload-section, .results-section {
+                padding: 1.5rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 
 <body>
-    <h1>Image Transformer</h1>
-    <p>Upload an image → background removed → horizontally flipped → hosted URL.</p>
+    <div class="container">
+        <div class="hero">
+            <h1>✨ Image Transformer</h1>
+            <p class="subtitle">Upload any image → AI removes background → horizontally flips → creates shareable URL</p>
+        </div>
 
-    <input type="file" id="file" accept="image/*" />
-    <button id="uploadBtn">Upload & Transform</button>
-    <div id="status"></div>
+        <div class="upload-section">
+            <div class="file-input-wrapper">
+                <input type="file" id="file" accept="image/*" />
+                <label for="file" class="file-input-label">
+                    <span class="upload-icon">📸</span>
+                    <span>Choose an image or drag & drop here</span>
+                </label>
+            </div>
+            <button id="uploadBtn">🚀 Transform Image</button>
+            <div id="status"></div>
+        </div>
 
-    <h2>Your images</h2>
-    <div id="list" class="grid"></div>
+        <div class="results-section">
+            <h2 class="section-title">🎨 Your Transformed Images</h2>
+            <div id="list" class="grid"></div>
+        </div>
+    </div>
 
     <script>
         const api = '/api/media';
@@ -60,18 +329,29 @@
             const data = await res.json();
             const list = document.getElementById('list');
             list.innerHTML = '';
-            (data.items || []).forEach(item => {
+            
+            if (!data.items || data.items.length === 0) {
+                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b; font-size: 1.1rem;">🎭 No transformed images yet. Upload your first image above!</div>';
+                return;
+            }
+            
+            data.items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
-          <img src="${item.url}" alt="image" />
-          <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
-            <a href="${item.url}" target="_blank">Open</a>
-            <button data-path="${item.pathname}">Delete</button>
+          <img src="${item.url}" alt="Transformed image" loading="lazy" />
+          <div class="card-actions">
+            <a href="${item.url}" target="_blank">🔗 View</a>
+            <button data-path="${item.pathname}">🗑️ Delete</button>
           </div>
         `;
                 div.querySelector('button').onclick = async (e) => {
-                    const path = e.currentTarget.getAttribute('data-path');
+                    const btn = e.currentTarget;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<span class="loading"></span>Deleting...';
+                    btn.disabled = true;
+                    
+                    const path = btn.getAttribute('data-path');
                     await fetch(api + '?action=delete&pathname=' + encodeURIComponent(path), { method: 'DELETE' });
                     await listImages();
                 };
@@ -81,32 +361,143 @@
 
         async function upload() {
             const f = document.getElementById('file').files[0];
-            if (!f) { alert('Pick a file'); return; }
-            document.getElementById('status').textContent = 'Processing…';
-
-            const buf = await f.arrayBuffer();
-            // base64 encode - process in chunks to avoid call stack overflow
-            const uint8Array = new Uint8Array(buf);
-            let binaryString = '';
-            const chunkSize = 8192; // Process 8KB at a time
-            for (let i = 0; i < uint8Array.length; i += chunkSize) {
-                const chunk = uint8Array.slice(i, i + chunkSize);
-                binaryString += String.fromCharCode(...chunk);
+            if (!f) { 
+                updateStatus('❌ Please select an image first!', 'error');
+                return; 
             }
-            const b64 = btoa(binaryString);
+            
+            updateStatus('🔄 Processing your image...', 'loading');
 
-            const res = await fetch(api + '?action=upload', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fileB64: b64 }),
-            });
-            const data = await res.json();
-            if (res.ok) {
-                document.getElementById('status').innerHTML = `Done → <a href="${data.url}" target="_blank">${data.url}</a>`;
-                await listImages();
+            try {
+                const buf = await f.arrayBuffer();
+                // base64 encode - process in chunks to avoid call stack overflow
+                const uint8Array = new Uint8Array(buf);
+                let binaryString = '';
+                const chunkSize = 8192; // Process 8KB at a time
+                for (let i = 0; i < uint8Array.length; i += chunkSize) {
+                    const chunk = uint8Array.slice(i, i + chunkSize);
+                    binaryString += String.fromCharCode(...chunk);
+                }
+                const b64 = btoa(binaryString);
+
+                const res = await fetch(api + '?action=upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileB64: b64 }),
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    updateStatus(`✨ Success! <a href="${data.url}" target="_blank" style="color: #8b5cf6; font-weight: 600;">View your transformed image →</a>`, 'success');
+                    await listImages();
+                    // Clear the file input
+                    document.getElementById('file').value = '';
+                    updateFileLabel();
+                } else {
+                    updateStatus(`❌ ${data.error || 'Unknown error'}${data.details ? '<br><small style="opacity: 0.8;">' + data.details + '</small>' : ''}`, 'error');
+                    console.error(data);
+                }
+            } catch (error) {
+                updateStatus('❌ Upload failed. Please try again.', 'error');
+                console.error('Upload error:', error);
+            }
+        }
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = message;
+            
+            // Remove existing type classes
+            status.classList.remove('status-loading', 'status-success', 'status-error', 'status-info');
+            
+            // Add new type class
+            status.classList.add(`status-${type}`);
+            
+            // Add styles based on type
+            switch(type) {
+                case 'loading':
+                    status.style.background = 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)';
+                    status.style.color = '#1d4ed8';
+                    status.style.border = '1px solid #93c5fd';
+                    break;
+                case 'success':
+                    status.style.background = 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)';
+                    status.style.color = '#166534';
+                    status.style.border = '1px solid #86efac';
+                    break;
+                case 'error':
+                    status.style.background = 'linear-gradient(135deg, #fef2f2 0%, #fecaca 100%)';
+                    status.style.color = '#dc2626';
+                    status.style.border = '1px solid #fca5a5';
+                    break;
+                default:
+                    status.style.background = 'rgba(248, 250, 252, 0.8)';
+                    status.style.color = '#64748b';
+                    status.style.border = '1px solid rgba(226, 232, 240, 0.8)';
+            }
+        }
+
+        function updateFileLabel() {
+            const fileInput = document.getElementById('file');
+            const label = document.querySelector('.file-input-label span:last-child');
+            
+            if (fileInput.files[0]) {
+                label.textContent = `Selected: ${fileInput.files[0].name}`;
+                label.parentElement.style.borderColor = '#10b981';
+                label.parentElement.style.background = 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)';
+                label.parentElement.style.color = '#047857';
             } else {
-                document.getElementById('status').textContent = 'Error: ' + (data.error || 'Unknown');
-                console.error(data);
+                label.textContent = 'Choose an image or drag & drop here';
+                label.parentElement.style.borderColor = '#e0e7ff';
+                label.parentElement.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+                label.parentElement.style.color = '#64748b';
+            }
+        }
+
+        // File input change handler
+        document.getElementById('file').addEventListener('change', updateFileLabel);
+
+        // Drag and drop functionality
+        const fileLabel = document.querySelector('.file-input-label');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            fileLabel.style.borderColor = '#8b5cf6';
+            fileLabel.style.background = 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)';
+            fileLabel.style.transform = 'scale(1.02)';
+        }
+
+        function unhighlight(e) {
+            fileLabel.style.borderColor = '#e0e7ff';
+            fileLabel.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+            fileLabel.style.transform = 'scale(1)';
+        }
+
+        fileLabel.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                document.getElementById('file').files = files;
+                updateFileLabel();
             }
         }
 
